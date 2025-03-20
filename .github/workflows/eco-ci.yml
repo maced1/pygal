@@ -24,7 +24,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           token: ${{ secrets.PAT_TOKEN }}
-          ref: 'dev'
+          ref: 'master'
           fetch-depth: 0
           submodules: recursive
         continue-on-error: true
@@ -45,7 +45,7 @@ jobs:
       - name: 'Checkout repository'
         uses: actions/checkout@v4
         with:
-          ref: 'dev'
+          ref: 'master'
           fetch-depth: 0
           submodules: recursive
 
