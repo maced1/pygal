@@ -22,10 +22,10 @@ jobs:
       - name: Checkout with PAT
         uses: actions/checkout@v4
         with:
+          token: ${{ secrets.PAT_TOKEN }}
           ref: 'dev'
           fetch-depth: 0
           submodules: recursive
-          token: ${{ secrets.GITHUB_TOKEN }}
       
       # - name: Install Eco-CI
       #   uses: green-coding-solutions/eco-ci-energy-estimation@v4 # use hash or @vX here (See note below)
