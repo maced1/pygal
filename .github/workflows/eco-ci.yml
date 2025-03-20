@@ -1,35 +1,58 @@
 name: Daily Tests with Energy Measurement
-run-name: Scheduled - DEV Branch
+run-name: Energy Measurement for ${{ github.actor }}
 on:
   schedule:
     - cron: '0 0 * * *'
+  push:
+    branches:
+      - master
 
 permissions:
-  read-all
+  contents: write
+  pull-requests: write
 
 jobs:
   run-tests:
     runs-on: ubuntu-latest
     steps:
+      - name: Debug Git Remotes
+        run: |
+          git remote -v
+
+      - name: Checkout with PAT
+        uses: actions/checkout@v4
+        with:
+          ref: 'dev'
+          fetch-depth: 0
+          submodules: recursive
+          token: ${{ secrets.GITHUB_TOKEN }}
+      
+      # - name: Install Eco-CI
+      #   uses: green-coding-solutions/eco-ci-energy-estimation@v4 # use hash or @vX here (See note below)
+      #   with:
+      #     task: install
+      #   continue-on-error: true # recommended setting for production. See notes below.
+
       - name: Start Measurement
         uses: green-coding-solutions/eco-ci-energy-estimation@v4 # use hash or @vX here (See note below)
         with:
           task: start-measurement
-        # continue-on-error: true # recommended setting for production. See notes below.
+        continue-on-error: true # recommended setting for production. See notes below.
 
 
       - name: 'Checkout repository'
         uses: actions/checkout@v4
         with:
           ref: 'dev'
-          submodules: 'true'
+          fetch-depth: 0
+          submodules: recursive
 
       - name: Checkout Repo Measurement
         uses: green-coding-solutions/eco-ci-energy-estimation@v4 # use hash or @vX here (See note below)
         with:
           task: get-measurement
           label: 'repo checkout'
-        # continue-on-error: true # recommended setting for production. See notes below.
+        continue-on-error: true # recommended setting for production. See notes below.
 
       - name: setup python
         uses: actions/setup-python@v5
@@ -47,7 +70,7 @@ jobs:
         with:
           task: get-measurement
           label: 'python setup'
-        # continue-on-error: true # recommended setting for production. See notes below.
+        continue-on-error: true # recommended setting for production. See notes below.
 
       - name: Run Tests
         shell: bash
@@ -59,10 +82,10 @@ jobs:
         with:
           task: get-measurement
           label: 'pytest'
-        # continue-on-error: true # recommended setting for production. See notes below.
+        continue-on-error: true # recommended setting for production. See notes below.
 
       - name: Show Energy Results
         uses: green-coding-solutions/eco-ci-energy-estimation@v4 # use hash or @vX here (See note below)
         with:
           task: display-results
-        # continue-on-error: true # recommended setting for production. See notes below.
+        continue-on-error: true # recommended setting for production. See notes below.
